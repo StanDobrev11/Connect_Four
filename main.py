@@ -30,10 +30,10 @@ def win(mtrx, col, row=0):
 
     def check_verticals():
         vertical_count = 1
-        for r in range(row - 1, -1, -1):
-            if r < 0 or mtrx[r][col] != mark:
-                break
-            vertical_count += 1
+        # for r in range(row - 1, -1, -1):
+        #     if r < 0 or mtrx[r][col] != mark:
+        #         break
+        #     vertical_count += 1
         for r in range(row + 1, ROWS):
             if r >= ROWS or mtrx[r][col] != mark:
                 break
@@ -111,7 +111,7 @@ def players(count):
     return turns
 
 
-ROWS, COLS = 6, 7
+ROWS, COLS = 5, 6
 matrix = [['.'] * COLS for _ in range(ROWS)]
 
 while True:
@@ -131,8 +131,8 @@ while True:
     player_mark = player_turns[0][1]
 
     while True:
+        column = int(input(f'Current player {cur_player} -({player_mark}) -> choose col: '))
         try:
-            column = int(input(f'Current player {cur_player} -({player_mark}) -> choose col: '))
             if not is_valid(column):
                 print('Not valid column')
             else:
