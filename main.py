@@ -111,7 +111,25 @@ def players(count):
     return turns
 
 
-ROWS, COLS = 5, 6
+def possible_new_states(state):
+    for col, row in enumerate(state):
+        yield state[:col] + (row - 1,) + state[col + 1:]
+
+def evaluate(state, is_maximizing):
+    pass
+
+
+
+def get_current_state(mtrx):
+    cur_state = [None] * COLS
+    for row in range(ROWS - 1, -1, -1):
+        for col in range(COLS):
+            if mtrx[row][col] == '.' and cur_state[col] is None:
+                cur_state[col] = row
+    return tuple(cur_state)
+
+
+ROWS, COLS = 6, 7
 matrix = [['.'] * COLS for _ in range(ROWS)]
 
 while True:
@@ -142,6 +160,11 @@ while True:
 
     column -= 1
     place_coin(matrix, column, player_mark, row=0)
+
+    state = get_current_state(matrix)
+    print(state)
+    print(list(possible_new_states(state)))
+
     if win(matrix, column):
         print(f'Winner is Player {cur_player}')
         print_(matrix)
