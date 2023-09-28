@@ -1,3 +1,5 @@
+import operator
+
 from players import HumanPlayer, RandomComputerPlayer, SmartComputerPlayer
 
 
@@ -44,6 +46,19 @@ class ConnectFour:
             return True
         return False
 
+    def get_count(self, letter, row, col, dx, dy, operator_func):
+        current_count = 0
+        for i in range(1, 4):
+            next_row = operator_func(row, dx * i)
+            next_col = operator_func(col, dy * i)
+            if not self.validation(next_row, next_col):
+                break
+            if self.board[next_row][next_col] == letter:
+                current_count += 1
+            else:
+                break
+        return current_count
+
     def make_move(self, letter, player_col):
         for row in range(ROWS - 1, -1, -1):
             if not self.board[row][player_col] == '.':
@@ -63,27 +78,11 @@ class ConnectFour:
             (1, 1),  # bottom right
         }
         for x, y in directions:
-            count = 1
-            for i in range(1, 4):
-                next_row = player_row + x * i
-                next_col = player_col + y * i
-                if not self.validation(next_row, next_col):
-                    break
-                if self.board[next_row][next_col] == letter:
-                    count += 1
-                else:
-                    break
-            for i in range(1, 4):
-                next_row = player_row - x * i
-                next_col = player_col - y * i
-                if not self.validation(next_row, next_col):
-                    break
-                if self.board[next_row][next_col] == letter:
-                    count += 1
-                else:
-                    break
-
-            if count >= 3:
+            count = (
+                    self.get_count(letter, player_row, player_col, x, y, operator.add)
+                    + self.get_count(letter, player_row, player_col, x, y, operator.sub) + 1
+            )
+            if count >= 4:
                 return True
         return False
 
@@ -105,15 +104,18 @@ def play(main, x_player, o_player, print_game=True):
                 print('')
             if main.current_winner:
                 print(f'Player {letter} hs WON')
-                return letter
+                raise SystemExit
+                # return letter
 
         letter = 'O' if letter == 'X' else 'X'
+    if main.num_empty_spaces() == 0:
+        print('DRAW')
 
 
 ROWS, COLS = 4, 6
 
 if __name__ == '__main__':
     x_pl = HumanPlayer('X')
-    o_pl = SmartComputerPlayer('O')
+    o_pl = HumanPlayer('O')
     t = ConnectFour()
     play(t, x_pl, o_pl, print_game=True)
