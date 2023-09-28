@@ -1,4 +1,4 @@
-from players import HumanPlayer, RandomComputerPlayer
+from players import HumanPlayer, RandomComputerPlayer, SmartComputerPlayer
 
 
 class ConnectFour:
@@ -22,24 +22,26 @@ class ConnectFour:
             return False
         return True
 
-    def empty_squares(self):
-        return True if all(map(lambda x: x >= 0, self.current_state())) else False
+    def available_moves(self):
+        for col in range(COLS):
+            for row in range(ROWS - 1, -1, -1):
+                if self.board[row][col] == '.':
+                    yield row, col
+                    break
 
-    def current_state(self):
-        state = [None] * COLS
-        for row in range(ROWS - 1, -1, -1):
-            if all(map(lambda x: x is not None, state)):
-                break
-            for col in range(COLS):
-                if self.board[row][col] == '.' and state[col] is None:
-                    state[col] = row
+    def any_empty_space(self):
+        return "." in self.board[0]
 
-        return state
+    def num_empty_spaces(self):
+        count = 0
+        for row in self.board:
+            count += row.count('.')
+        return count
 
-    def validation(self, row, col, letter):
+    @staticmethod
+    def validation(row, col):
         if row in range(ROWS) and col in range(COLS):
             return True
-
         return False
 
     def make_move(self, letter, player_col):
@@ -65,19 +67,23 @@ class ConnectFour:
             for i in range(1, 4):
                 next_row = player_row + x * i
                 next_col = player_col + y * i
-                if not self.validation(next_row, next_col, letter):
+                if not self.validation(next_row, next_col):
                     break
                 if self.board[next_row][next_col] == letter:
                     count += 1
+                else:
+                    break
             for i in range(1, 4):
                 next_row = player_row - x * i
                 next_col = player_col - y * i
-                if not self.validation(next_row, next_col, letter):
+                if not self.validation(next_row, next_col):
                     break
                 if self.board[next_row][next_col] == letter:
                     count += 1
+                else:
+                    break
 
-            if count >= 4:
+            if count >= 3:
                 return True
         return False
 
@@ -87,7 +93,7 @@ def play(main, x_player, o_player, print_game=True):
         main.print_board()
 
     letter = 'X'
-    while main.empty_squares():
+    while main.any_empty_space():
         if letter == 'O':
             column = o_player.get_move(main)
         else:
@@ -104,10 +110,10 @@ def play(main, x_player, o_player, print_game=True):
         letter = 'O' if letter == 'X' else 'X'
 
 
-ROWS, COLS = 6, 7
+ROWS, COLS = 4, 6
 
 if __name__ == '__main__':
     x_pl = HumanPlayer('X')
-    o_pl = RandomComputerPlayer('O')
+    o_pl = SmartComputerPlayer('O')
     t = ConnectFour()
     play(t, x_pl, o_pl, print_game=True)

@@ -19,7 +19,6 @@ def current_state(self):
     return state
 
 
-
 def _valid(col):
     if col - 1 not in range(COLS):
         return False
@@ -27,21 +26,40 @@ def _valid(col):
         return False
     return True
 
+
+def empty_space():
+    count = 0
+    for row in board:
+        count += row.count('.')
+    return count
+
+
+def available_moves():
+    for col in range(COLS):
+        for row in range(ROWS - 1, -1, -1):
+            if board[row][col] == '.':
+                yield row, col
+                break
+
+
+
 ROWS, COLS = 6, 7
 board = make_board()
 
-valid_col = False
-value = None
-while not valid_col:
-    column = input(f'Current player {"X"} -> choose column: ')
-    try:
-        value = int(column) - 1
-        if _valid(value + 1):
-            # if current_state()[value] >= 0:
-            valid_col = True
-        raise ValueError
-    except ValueError:
-        print('Please make a valid choice')
-print(value)
+# valid_col = False
+# value = None
+# while not valid_col:
+#     column = input(f'Current player {"X"} -> choose column: ')
+#     try:
+#         value = int(column) - 1
+#         if _valid(value + 1):
+#             # if current_state()[value] >= 0:
+#             valid_col = True
+#         raise ValueError
+#     except ValueError:
+#         print('Please make a valid choice')
+# print(value)
 
 
+# print(available_moves())
+print(list(available_moves()))
