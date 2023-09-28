@@ -1,6 +1,12 @@
+from colorama import Fore
 import operator
 
 from players import HumanPlayer, RandomComputerPlayer, SmartComputerPlayer
+
+"""
+Colorama/Fore - allows to change color of all that is printed in the console
+Syntax: Fore.RED + 'STRING' + Fore.RESET 
+"""
 
 
 class ConnectFour:
@@ -9,13 +15,14 @@ class ConnectFour:
         self.board = self.make_board()
         self.current_winner = None
 
-    def make_board(self):
+    @staticmethod
+    def make_board():
         return [['.'] * COLS for _ in range(ROWS)]
 
     def print_board(self):
         for row in self.board:
             print(' '.join(map(str, row)))
-        print(' '.join(map(str, range(1, COLS + 1))))
+        print(Fore.GREEN + ' '.join(map(str, range(1, COLS + 1))) + Fore.RESET)
 
     def is_valid(self, col):
         if col - 1 not in range(COLS):
@@ -91,9 +98,9 @@ def play(main, x_player, o_player, print_game=True):
     if print_game:
         main.print_board()
 
-    letter = 'X'
+    letter = Fore.RED + 'X' + Fore.RESET
     while main.any_empty_space():
-        if letter == 'O':
+        if letter == Fore.BLUE + 'O' + Fore.RESET:
             column = o_player.get_move(main)
         else:
             column = x_player.get_move(main)
@@ -107,7 +114,7 @@ def play(main, x_player, o_player, print_game=True):
                 raise SystemExit
                 # return letter
 
-        letter = 'O' if letter == 'X' else 'X'
+        letter = (Fore.BLUE + 'O' + Fore.RESET) if letter == (Fore.RED + 'X' + Fore.RESET) else (Fore.RED + 'X' + Fore.RESET)
     if main.num_empty_spaces() == 0:
         print('DRAW')
 
@@ -115,7 +122,7 @@ def play(main, x_player, o_player, print_game=True):
 ROWS, COLS = 4, 6
 
 if __name__ == '__main__':
-    x_pl = HumanPlayer('X')
-    o_pl = HumanPlayer('O')
+    x_pl = HumanPlayer(Fore.RED + 'X' + Fore.RESET)
+    o_pl = HumanPlayer(Fore.BLUE + 'O' + Fore.RESET)
     t = ConnectFour()
     play(t, x_pl, o_pl, print_game=True)
